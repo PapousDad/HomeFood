@@ -1,0 +1,14 @@
+{
+  "name": "Our Meal Planner",
+  "short_name": "Meal Planner",
+  "description": "Vegetarian meal planner with recipes and shopping list",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#F7F4EE",
+  "theme_color": "#C17E3A",
+  "orientation": "portrait-primary",
+  "icons": [
+    { "src": "icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any maskable" },
+    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" }
+  ]
+}

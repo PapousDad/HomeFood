@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#C17E3A">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Meal Planner">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icon-192.png">
+<title>Our Meal Planner</title>
+<link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,600;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root{--cream:#F7F4EE;--warm:#FDFCFA;--ink:#1C1C1A;--muted:#6B6860;--faint:#A8A49D;--accent:#C17E3A;--accent-l:#F2E8D9;--green-l:#E8F2EB;--border:#E2DDD6;--danger:#C05030;--danger-l:#FCEEE9;}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;font-family:'DM Sans',sans-serif;background:var(--cream);color:var(--ink)}
+header{background:var(--warm);border-bottom:1px solid var(--border);padding:13px 15px;display:flex;align-items:center;gap:10px;position:sticky;top:0;z-index:100}
+.leaf{width:22px;height:22px;background:var(--green-l);border-radius:50% 50% 50% 0;transform:rotate(-45deg);flex-shrink:0}
+header h1{font-family:'Lora',serif;font-size:17px;font-weight:600;letter-spacing:-.3px}
+.add-btn{margin-left:auto;font-size:12px;font-weight:500;padding:6px 12px;border-radius:8px;border:none;background:var(--accent);color:#fff;cursor:pointer;font-family:'DM Sans',sans-serif}
+.tabs{display:flex;border-bottom:1px solid var(--border);background:var(--warm);padding:0 15px;position:sticky;top:50px;z-index:99;overflow-x:auto}
+.tab{font-size:13px;font-weight:500;padding:10px 11px;border:none;background:none;cursor:pointer;color:var(--faint);border-bottom:2px solid transparent;margin-bottom:-1px;white-space:nowrap;font-family:'DM Sans',sans-serif;transition:all .15s}
+.tab.active{color:var(--accent);border-bottom-color:var(--accent)}
+.main{max-width:680px;margin:0 auto;padding:16px 13px 90px}
+.view{display:none}.view.active{display:block}
+.section{margin-bottom:24px}
+.sec-hdr{display:flex;align-items:center;gap:8px;margin-bottom:9px}
+.sec-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.d-morning{background:#D4891A}.d-lunch{background:#4A7C59}.d-dinner{background:#7068C4}.d-snack{background:#C05030}
+.sec-title{font-family:'Lora',serif;font-size:15px;font-weight:600}
+.sec-count{font-size:11px;color:var(--faint);margin-left:auto}
+.dishes{display:flex;flex-direction:column;gap:4px}
+.dish-btn{background:var(--warm);border:1px solid var(--border);border-radius:10px;padding:10px 12px;display:flex;align-items:center;gap:8px;cursor:pointer;text-align:left;width:100%;transition:all .15s;-webkit-tap-highlight-color:transparent;font-family:'DM Sans',sans-serif}
+.dish-btn:hover,.dish-btn:active{border-color:var(--accent);background:var(--accent-l)}
+.dish-info{flex:1;min-width:0}
+.dish-name{font-size:13px;color:var(--ink);line-height:1.3;display:block}
+.dish-stats{display:flex;gap:7px;margin-top:2px;flex-wrap:wrap}
+.dstat{font-size:10px;color:var(--faint);display:flex;align-items:center;gap:2px}
+.dsd{width:4px;height:4px;border-radius:50%;flex-shrink:0}
+.dsd-k{background:#D4891A}.dsd-p{background:#4A7C59}.dsd-f{background:#7068C4}
+.tags{display:flex;gap:3px;flex-shrink:0;flex-wrap:wrap;justify-content:flex-end}
+.tag{font-size:10px;font-weight:500;padding:2px 6px;border-radius:99px}
+.tag-k{background:#D4EDBA;color:#2D5A1B}.tag-af{background:#D1EDE3;color:#1A5C3A}.tag-st{background:#FDE8C8;color:#7A4010}.tag-cu{background:#E8E6F8;color:#3D3690}.tag-t{background:#E8E6F8;color:#3D3690}
+.arr{width:13px;height:13px;color:var(--faint);flex-shrink:0}
+.add-dish-btn{display:flex;align-items:center;gap:7px;width:100%;padding:8px 12px;border:1px dashed var(--border);border-radius:10px;background:none;cursor:pointer;color:var(--faint);font-size:12px;font-family:'DM Sans',sans-serif;transition:all .15s;margin-top:3px}
+.add-dish-btn:hover{border-color:var(--accent);color:var(--accent);background:var(--accent-l)}
+.ai{width:17px;height:17px;border-radius:50%;background:var(--cream);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:12px;flex-shrink:0}
+.legend{text-align:center;margin-top:6px;display:flex;gap:5px;flex-wrap:wrap;justify-content:center}
+.leg{font-size:10px;font-weight:500;padding:2px 7px;border-radius:99px}
+.ing-sec{margin-bottom:20px}
+.ing-sec-title{font-size:11px;font-weight:500;text-transform:uppercase;letter-spacing:.07em;color:var(--faint);margin-bottom:7px;padding-bottom:5px;border-bottom:1px solid var(--border)}
+.ing-col{display:flex;flex-direction:column;gap:3px}
+.ing-row{display:flex;align-items:center;justify-content:space-between;padding:7px 10px;background:var(--warm);border:1px solid var(--border);border-radius:8px}
+.ing-row.custom{border-color:#AFA9EC;background:#EEEDFE}
+.ing-name{font-size:13px;color:var(--ink)}
+.ing-del{background:none;border:none;cursor:pointer;color:var(--faint);font-size:12px;padding:2px 4px;transition:color .15s;font-family:'DM Sans',sans-serif}
+.ing-del:hover{color:var(--danger)}
+.add-ing-row{display:flex;gap:5px;margin-top:7px}
+.add-ing-row input{flex:1;font-size:13px;font-family:'DM Sans',sans-serif;padding:7px 10px;border:1px solid var(--border);border-radius:8px;background:var(--warm);color:var(--ink);outline:none}
+.add-ing-row input:focus{border-color:var(--accent)}
+.add-ing-row button{font-size:13px;font-family:'DM Sans',sans-serif;font-weight:500;padding:7px 12px;border-radius:8px;border:none;background:var(--accent);color:#fff;cursor:pointer}
+.new-cat-section{margin-top:4px;padding:12px;background:var(--warm);border:1px solid var(--border);border-radius:10px}
+.new-cat-label{font-size:12px;color:var(--muted);margin-bottom:6px;display:block}
+.shop-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
+.shop-title{font-family:'Lora',serif;font-size:15px;font-weight:600}
+.shop-clear{font-size:12px;color:var(--faint);background:none;border:none;cursor:pointer;font-family:'DM Sans',sans-serif;padding:3px 6px;border-radius:6px}
+.shop-clear:hover{color:var(--danger)}
+.shop-items{display:flex;flex-direction:column;gap:3px;margin-bottom:10px}
+.shop-item{display:flex;align-items:center;gap:10px;padding:9px 12px;background:var(--warm);border:1px solid var(--border);border-radius:8px;cursor:pointer;-webkit-tap-highlight-color:transparent}
+.shop-item.done{opacity:.5}
+.shop-item.done .shop-item-name{text-decoration:line-through;color:var(--faint)}
+.shop-check{width:18px;height:18px;border-radius:50%;border:1.5px solid var(--border);flex-shrink:0;display:flex;align-items:center;justify-content:center;transition:all .15s}
+.shop-item.done .shop-check{background:var(--accent);border-color:var(--accent)}
+.shop-check-tick{display:none;color:#fff;font-size:10px}
+.shop-item.done .shop-check-tick{display:block}
+.shop-item-name{font-size:13px;color:var(--ink);flex:1}
+.shop-item-del{background:none;border:none;cursor:pointer;color:var(--faint);font-size:12px;padding:2px 4px;font-family:'DM Sans',sans-serif}
+.shop-item-del:hover{color:var(--danger)}
+.shop-add-row{display:flex;gap:5px}
+.shop-add-row input{flex:1;font-size:13px;font-family:'DM Sans',sans-serif;padding:9px 11px;border:1px solid var(--border);border-radius:8px;background:var(--warm);color:var(--ink);outline:none}
+.shop-add-row input:focus{border-color:var(--accent)}
+.shop-add-row button{font-size:13px;font-family:'DM Sans',sans-serif;font-weight:500;padding:9px 14px;border-radius:8px;border:none;background:var(--accent);color:#fff;cursor:pointer;white-space:nowrap}
+.shop-empty{text-align:center;padding:28px;color:var(--faint);font-size:13px}
+.shop-divider{height:1px;background:var(--border);margin:14px 0}
+.quick-add-title{font-size:11px;font-weight:500;text-transform:uppercase;letter-spacing:.07em;color:var(--faint);margin-bottom:7px}
+.quick-chips{display:flex;flex-wrap:wrap;gap:5px}
+.quick-chip{font-size:12px;padding:5px 10px;border-radius:99px;border:1px solid var(--border);background:var(--warm);color:var(--muted);cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .15s}
+.quick-chip:hover{border-color:var(--accent);color:var(--accent);background:var(--accent-l)}
+.overlay{display:none;position:fixed;inset:0;background:rgba(28,28,26,.55);z-index:200;backdrop-filter:blur(2px);-webkit-backdrop-filter:blur(2px)}
+.overlay.open{display:flex;align-items:flex-end;justify-content:center}
+@media(min-width:600px){.overlay.open{align-items:center}}
+.modal{background:var(--warm);border-radius:20px 20px 0 0;width:100%;max-width:620px;max-height:91vh;overflow-y:auto;animation:up .25s cubic-bezier(.34,1.56,.64,1)}
+@media(min-width:600px){.modal{border-radius:16px;margin:16px;max-height:87vh}}
+@keyframes up{from{transform:translateY(40px);opacity:0}to{transform:translateY(0);opacity:1}}
+.modal-handle{width:34px;height:4px;background:var(--border);border-radius:2px;margin:11px auto 0}
+@media(min-width:600px){.modal-handle{display:none}}
+.modal-hdr{padding:15px 15px 12px;border-bottom:1px solid var(--border);display:flex;align-items:flex-start;gap:10px}
+.modal-title-wrap{flex:1}
+.modal-title{font-family:'Lora',serif;font-size:16px;font-weight:600;line-height:1.3}
+.modal-sub{font-size:11px;color:var(--faint);margin-top:3px}
+.modal-close{width:27px;height:27px;border-radius:50%;border:1px solid var(--border);background:var(--cream);cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:12px;color:var(--muted);font-family:'DM Sans',sans-serif}
+.modal-close:hover{background:var(--border)}
+.modal-body{padding:15px}
+.recipe-desc{font-size:13px;color:var(--muted);line-height:1.6;font-style:italic;font-family:'Lora',serif;margin-bottom:12px}
+.stat-cards{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}
+.stat-card{flex:1;min-width:70px;background:var(--cream);border:1px solid var(--border);border-radius:8px;padding:7px 8px;text-align:center}
+.stat-val{font-size:14px;font-weight:500;color:var(--ink)}
+.stat-lbl{font-size:10px;color:var(--faint);margin-top:1px}
+.divider{height:1px;background:var(--border);margin:12px 0}
+.rec-label{font-size:11px;font-weight:500;text-transform:uppercase;letter-spacing:.07em;color:var(--faint);margin-bottom:6px}
+.rec-ing-list{display:flex;flex-direction:column;gap:4px;margin-bottom:4px}
+.rec-ing{font-size:13px;color:var(--ink);padding:5px 0;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:6px}
+.rec-ing:last-child{border-bottom:none}
+.rec-ing::before{content:'';width:4px;height:4px;border-radius:50%;background:var(--accent);flex-shrink:0}
+.steps{display:flex;flex-direction:column;gap:9px}
+.step{display:flex;gap:9px;align-items:flex-start}
+.step-n{width:21px;height:21px;border-radius:50%;background:var(--accent-l);color:var(--accent);font-size:11px;font-weight:500;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px}
+.step-t{font-size:13px;line-height:1.6;color:var(--ink)}
+.del-btn{display:flex;align-items:center;gap:5px;background:none;border:1px solid var(--border);border-radius:8px;padding:7px 12px;font-size:12px;color:var(--danger);cursor:pointer;margin-top:14px;width:100%;justify-content:center;font-family:'DM Sans',sans-serif}
+.del-btn:hover{background:var(--danger-l);border-color:var(--danger)}
+.fg{margin-bottom:12px}.fl{font-size:12px;font-weight:500;color:var(--muted);margin-bottom:4px;display:block}
+.fi{width:100%;font-size:13px;font-family:'DM Sans',sans-serif;padding:9px 11px;border:1px solid var(--border);border-radius:8px;background:var(--warm);color:var(--ink);outline:none}
+.fi:focus{border-color:var(--accent)}
+.fr2{display:grid;grid-template-columns:1fr 1fr;gap:9px}
+.fr3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:7px}
+.fa{display:flex;gap:7px;margin-top:14px}
+.bc{flex:1;padding:9px;border:1px solid var(--border);border-radius:8px;background:none;font-size:13px;font-family:'DM Sans',sans-serif;color:var(--muted);cursor:pointer}
+.bs{flex:2;padding:9px;border:none;border-radius:8px;background:var(--accent);font-size:13px;font-weight:500;font-family:'DM Sans',sans-serif;color:#fff;cursor:pointer}
+.cbrow{display:flex;gap:10px;flex-wrap:wrap}
+.cbl{display:flex;align-items:center;gap:5px;font-size:13px;color:var(--muted);cursor:pointer}
+.cbl input{accent-color:var(--accent)}
+</style>
+</head>
+<body>
+<header>
+  <div class="leaf"></div>
+  <h1>Our Meal Planner</h1>
+  <button class="add-btn" onclick="openAddDish()">+ Add dish</button>
+</header>
+<div class="tabs">
+  <button class="tab active" onclick="showTab('meals',this)">Meals</button>
+  <button class="tab" onclick="showTab('shop',this)">&#128722; Shop</button>
+  <button class="tab" onclick="showTab('ingredients',this)">Ingredients</button>
+</div>
+<div class="main">
+  <div class="view active" id="view-meals">
+    <div class="section"><div class="sec-hdr"><div class="sec-dot d-morning"></div><div class="sec-title">Morning</div><div class="sec-count" id="count-morning"></div></div><div class="dishes" id="dishes-morning"></div><button class="add-dish-btn" onclick="openAddDish('morning')"><div class="ai">+</div>Add morning dish</button></div>
+    <div class="section"><div class="sec-hdr"><div class="sec-dot d-lunch"></div><div class="sec-title">Lunch</div><div class="sec-count" id="count-lunch"></div></div><div class="dishes" id="dishes-lunch"></div><button class="add-dish-btn" onclick="openAddDish('lunch')"><div class="ai">+</div>Add lunch dish</button></div>
+    <div class="section"><div class="sec-hdr"><div class="sec-dot d-dinner"></div><div class="sec-title">Dinner</div><div class="sec-count" id="count-dinner"></div></div><div class="dishes" id="dishes-dinner"></div><button class="add-dish-btn" onclick="openAddDish('dinner')"><div class="ai">+</div>Add dinner dish</button></div>
+    <div class="section"><div class="sec-hdr"><div class="sec-dot d-snack"></div><div class="sec-title">Snacks</div><div class="sec-count" id="count-snack"></div></div><div class="dishes" id="dishes-snack"></div><button class="add-dish-btn" onclick="openAddDish('snack')"><div class="ai">+</div>Add snack</button></div>
+    <div class="legend"><span class="leg tag-k">K = kids</span><span class="leg tag-af">Airfryer</span><span class="leg tag-st">Stevia</span><span class="leg tag-cu">Custom</span></div>
+  </div>
+  <div class="view" id="view-shop">
+    <div style="margin-bottom:20px"><div class="shop-hdr"><div class="shop-title">Shopping list</div><button class="shop-clear" onclick="clearDoneItems()">Remove checked</button></div><div class="shop-items" id="shop-items"></div><div class="shop-add-row"><input id="shop-input" placeholder="Add item..." onkeydown="if(event.key==='Enter')addShopItem()"/><button onclick="addShopItem()">Add</button></div></div>
+    <div class="shop-divider"></div>
+    <div><div class="quick-add-title">Quick add from ingredients</div><div class="quick-chips" id="quick-chips"></div></div>
+  </div>
+  <div class="view" id="view-ingredients"><div id="ing-content"></div></div>
+</div>
+<div class="overlay" id="overlay-recipe" onclick="handleOC(event,'overlay-recipe')">
+  <div class="modal"><div class="modal-handle"></div><div class="modal-hdr"><div class="modal-title-wrap"><div class="modal-title" id="modal-title"></div><div class="modal-sub" id="modal-sub"></div></div><button class="modal-close" onclick="closeModal('overlay-recipe')">&#10005;</button></div><div class="modal-body" id="modal-body"></div></div>
+</div>
+<div class="overlay" id="overlay-add" onclick="handleOC(event,'overlay-add')">
+  <div class="modal"><div class="modal-handle"></div><div class="modal-hdr"><div class="modal-title-wrap"><div class="modal-title">Add dish</div></div><button class="modal-close" onclick="closeModal('overlay-add')">&#10005;</button></div>
+  <div class="modal-body">
+    <div class="fg"><label class="fl">Dish name *</label><input class="fi" id="add-name" placeholder="e.g. Tofu stir-fry"/></div>
+    <div class="fr2"><div class="fg"><label class="fl">Meal moment *</label><select class="fi" id="add-moment"><option value="morning">Morning</option><option value="lunch">Lunch</option><option value="dinner">Dinner</option><option value="snack">Snack</option></select></div><div class="fg"><label class="fl">Prep time</label><input class="fi" id="add-time" placeholder="e.g. 20 min"/></div></div>
+    <div class="fr3"><div class="fg"><label class="fl">Kcal</label><input class="fi" id="add-kcal" placeholder="~450"/></div><div class="fg"><label class="fl">Protein (g)</label><input class="fi" id="add-protein" placeholder="~25"/></div><div class="fg"><label class="fl">Fibre (g)</label><input class="fi" id="add-fibre" placeholder="~8"/></div></div>
+    <div class="fg"><label class="fl">Tags</label><div class="cbrow"><label class="cbl"><input type="checkbox" id="tag-kids"> Kids</label><label class="cbl"><input type="checkbox" id="tag-airfryer"> Airfryer</label><label class="cbl"><input type="checkbox" id="tag-stevia"> Stevia</label></div></div>
+    <div class="fa"><button class="bc" onclick="closeModal('overlay-add')">Cancel</button><button class="bs" onclick="saveDish()">Save dish</button></div>
+  </div></div>
+</div>
+<script>
+var RECIPES={m1:{description:"A creamy protein-rich start with fresh berries and crunchy muesli.",prepTime:"3 min",servings:"1",ingredients:["150g soya yoghurt","50g muesli","handful mixed berries","1 kiwi sliced","1 tsp honey optional"],steps:["Spoon soya yoghurt into a bowl.","Add muesli on top.","Add mixed berries and sliced kiwi.","Drizzle with honey if desired and serve immediately."]},m2:{description:"Fluffy spelt pancakes loaded with peanut butter and banana for lasting energy.",prepTime:"15 min",servings:"2",ingredients:["150g spelt pancake mix","200ml plant milk","2 bananas","3 tbsp peanut butter","1 tsp coconut oil"],steps:["Mix spelt pancake mix with plant milk until smooth.","Heat coconut oil in a pan over medium heat.","Pour small ladles of batter, cook 2 min per side until golden.","Spread peanut butter on each pancake and top with sliced banana."]},m3:{description:"A simple satisfying toast with melted cheese and a touch of sweetness.",prepTime:"5 min",servings:"1",ingredients:["2 slices wholegrain bread","40g cheese sliced","1 tbsp jam"],steps:["Toast the bread slices.","Layer cheese on the warm toast.","Spread jam on the other slice.","Press together or serve open-faced."]},m4:{description:"Creamy scrambled eggs with salty feta and tender broccolini, ready in minutes.",prepTime:"10 min",servings:"2",ingredients:["4 eggs","60g feta crumbled","100g broccolini","1 tbsp olive oil","salt and pepper"],steps:["Steam or microwave broccolini for 3 min until just tender.","Whisk eggs with a pinch of salt and pepper.","Heat olive oil in a pan over low heat, add eggs and stir gently.","When almost set, fold in feta and broccolini. Serve immediately."]},m5:{description:"A no-cook wholesome bowl of muesli with plant milk and seasonal fruit.",prepTime:"3 min",servings:"1",ingredients:["60g muesli","200ml soy milk","1 banana sliced","handful mixed berries","1 tsp chia seeds optional"],steps:["Pour muesli into a bowl.","Add soy milk.","Top with sliced banana and berries.","Add chia seeds if using and serve."]},l1:{description:"A filling Asian-inspired bowl with crispy tofu and colourful vegetables over rice.",prepTime:"20 min",servings:"2",ingredients:["200g firm tofu cubed","150g wholegrain rice","200g Asian vegetable mix","2 tbsp soy sauce","1 tbsp sesame oil","1 tsp sesame seeds"],steps:["Cook rice according to package instructions.","Press tofu dry, then pan-fry in sesame oil over high heat until golden, about 8 min.","Add vegetables to the pan and stir-fry 4 min.","Add soy sauce, toss well. Serve over rice with sesame seeds."]},l2:{description:"A light low-carb version with shirataki noodles and umami-rich tofu.",prepTime:"15 min",servings:"2",ingredients:["200g firm tofu cubed","400g shirataki noodles","200g Asian vegetable mix","2 tbsp soy sauce","1 tbsp sesame oil","1 clove garlic minced"],steps:["Rinse and drain shirataki noodles well, dry-fry in a hot pan 2 min.","Pan-fry tofu in sesame oil until golden, about 8 min.","Add garlic and vegetables, stir-fry 3 min.","Add noodles and soy sauce, toss together and serve hot."]},l3:{description:"A protein-packed Japanese-inspired bowl with smoky tempeh and edamame.",prepTime:"15 min",servings:"2",ingredients:["200g tempeh sliced","150g wholegrain rice cooked","100g edamame shelled","2 tbsp soy sauce","1 tbsp sesame oil","1 tsp rice vinegar","sesame seeds to garnish"],steps:["Marinate tempeh in soy sauce and rice vinegar for 5 min.","Pan-fry tempeh in sesame oil 3-4 min per side until golden.","Warm edamame in a pan or microwave.","Serve tempeh and edamame over rice. Garnish with sesame seeds."]},l4:{description:"A hearty earthy salad with tender lentils, roasted beetroot and tangy feta.",prepTime:"10 min",servings:"2",ingredients:["200g cooked lentils","200g cooked beetroot cubed","80g feta crumbled","2 tbsp balsamic vinegar","1 tbsp olive oil","handful fresh parsley"],steps:["Drain and rinse lentils if using tinned.","Combine lentils and beetroot in a bowl.","Drizzle with olive oil and balsamic vinegar, toss gently.","Top with crumbled feta and fresh herbs."]},l5:{description:"A smooth warming soup with sweet roasted bell peppers and a hint of cumin.",prepTime:"20 min",servings:"3",ingredients:["4 red bell peppers roughly chopped","1 onion chopped","2 cloves garlic","500ml vegetable stock","1 tsp cumin","1 tbsp olive oil","salt and pepper"],steps:["Saute onion and garlic in olive oil over medium heat for 5 min.","Add bell peppers and cumin, cook 5 min.","Pour in stock, bring to boil, simmer 10 min.","Blend until smooth. Season and serve."]},l6:{description:"A vibrant bowl with rice, fresh vegetables and a tangy soy-sesame dressing.",prepTime:"15 min",servings:"2",ingredients:["150g wholegrain rice cooked","150g firm tofu or edamame","1 cucumber sliced","1 carrot grated","1 avocado sliced","2 tbsp soy sauce","1 tsp sesame oil"],steps:["Prepare all vegetables and arrange in bowls over rice.","Pan-fry tofu until golden if using, about 5 min.","Mix soy sauce and sesame oil for dressing.","Drizzle dressing over bowl and serve."]},d1:{description:"A classic Italian-inspired pasta with a rich tomato lentil sauce.",prepTime:"20 min",servings:"4",ingredients:["350g wholegrain spaghetti","400g tinned lentils drained","400g Heinz tomato sauce","1 onion diced","2 cloves garlic","1 tsp oregano","1 tbsp olive oil"],steps:["Cook spaghetti according to package instructions.","Saute onion and garlic in olive oil for 5 min.","Add tomato sauce, lentils and oregano. Simmer 10 min.","Season to taste. Serve sauce over pasta."]},d2:{description:"A hearty smoky chili with red beans and lentils - warming and full of flavour.",prepTime:"20 min",servings:"4",ingredients:["400g tinned red beans drained","200g red lentils","400g Heinz tomato sauce","1 onion diced","2 cloves garlic","1 tsp cumin","1 tsp paprika powder","1 tbsp olive oil"],steps:["Saute onion and garlic in olive oil for 5 min.","Add cumin and paprika, stir 1 min.","Add tomato sauce, lentils and 300ml water. Simmer 12 min.","Add red beans, simmer 5 more min. Season and serve."]},d3:{description:"A quick weeknight pasta with vibrant green pesto and tender broccoli florets.",prepTime:"15 min",servings:"4",ingredients:["350g wholegrain pasta","300g broccoli florets","4 tbsp green pesto","2 tbsp olive oil","40g hard cheese","salt and pepper"],steps:["Cook pasta according to package instructions.","Add broccoli to pasta water for the last 4 min.","Drain, reserving a cup of pasta water.","Toss with pesto and olive oil, adding pasta water to loosen. Serve with cheese."]},"d3b":{description:"A simple green pasta with pesto and crunchy green beans.",prepTime:"15 min",servings:"4",ingredients:["350g wholegrain pasta","250g green beans trimmed","4 tbsp green pesto","2 tbsp olive oil","40g hard cheese"],steps:["Cook pasta according to package instructions.","Add green beans to pasta water for the last 5 min.","Drain, reserving some pasta water.","Toss with pesto and olive oil. Season and serve with cheese."]},d5:{description:"Golden pan-fried halloumi with tender green beans over wholegrain pasta.",prepTime:"20 min",servings:"4",ingredients:["350g wholegrain pasta","250g halloumi sliced","200g green beans trimmed","2 tbsp olive oil","juice and zest of 1 lemon","fresh mint or parsley"],steps:["Cook pasta according to package instructions.","Blanch green beans in pasta water for 4 min, set aside.","Pan-fry halloumi in olive oil 2-3 min per side until golden.","Drain pasta, toss with green beans and lemon. Top with halloumi and herbs."]},d7:{description:"Crispy airfryer tofu over fluffy rice with hearty red beans.",prepTime:"20 min",servings:"3",ingredients:["300g firm tofu","150g wholegrain rice cooked","400g tinned red beans drained","2 tbsp soy sauce","1 tsp cornstarch","1 tbsp sesame oil","1 tsp paprika powder"],steps:["Press tofu dry and cut into cubes. Toss with soy sauce, cornstarch and paprika.","Air fry at 200C for 15 min, shaking halfway, until golden and crispy.","Warm red beans in a pan with sesame oil.","Serve crispy tofu and beans over rice."]},d8:{description:"Juicy veg meatballs with caramelised airfryer parsnip and creamy hummus.",prepTime:"18 min",servings:"3",ingredients:["300g vegetarian meatballs","3 parsnips cut into wedges","4 tbsp hummus","1 tbsp olive oil","1 tsp cumin","1 tsp paprika powder"],steps:["Toss parsnip wedges in olive oil, cumin and paprika.","Air fry parsnip at 190C for 10 min. Add meatballs and cook 8 more min.","Spread hummus on plates.","Arrange parsnip and meatballs over hummus."]},d9:{description:"Colourful stuffed peppers filled with savoury veg mince and red beans.",prepTime:"20 min",servings:"4",ingredients:["4 bell peppers halved and deseeded","300g vegetarian mince","400g tinned red beans drained","200g Heinz tomato sauce","1 tsp paprika powder","1 tsp oregano"],steps:["Mix veg mince, red beans, tomato sauce, paprika and oregano. Season well.","Fill pepper halves generously with the mixture.","Air fry at 180C for 15 min until peppers are tender.","Serve immediately."]},d11:{description:"Simple and kid-friendly fish sticks with creamy spinach and golden potatoes.",prepTime:"20 min",servings:"4",ingredients:["400g fish sticks","600g potatoes cubed","200g fresh spinach","2 cloves garlic","1 tbsp olive oil","1 tbsp butter","salt and pepper"],steps:["Boil potatoes 12-15 min until tender. Drain and season.","Air fry or oven-bake fish sticks at 180C for 12-15 min.","Saute garlic in butter, add spinach and wilt 2 min. Season.","Serve fish sticks alongside spinach and potatoes."]},s1:{description:"A simple earthy snack with tender beetroot and a tangy balsamic glaze.",prepTime:"5 min",servings:"2",ingredients:["200g cooked beetroot sliced","2 tbsp balsamic vinegar","1 tsp olive oil","pinch of salt"],steps:["Slice cooked beetroot and arrange on a plate.","Drizzle with balsamic vinegar and olive oil.","Season with salt and serve."]},s2:{description:"Crispy golden parsnip chips seasoned with herbs.",prepTime:"15 min",servings:"2",ingredients:["2 large parsnips thinly sliced","1 tbsp olive oil","1 tsp mixed herbs","1 tsp paprika","pinch of salt"],steps:["Slice parsnips as thinly as possible.","Toss in olive oil, herbs and paprika.","Air fry at 160C for 12-15 min, checking often, until crispy.","Cool 2 min before serving."]},s3:{description:"Crunchy roasted chickpeas with smoky paprika.",prepTime:"15 min",servings:"2",ingredients:["400g tinned chickpeas drained and dried","1 tbsp olive oil","1 tsp paprika powder","1 tsp cumin","pinch of salt"],steps:["Pat chickpeas completely dry - this is key for crunch.","Toss with olive oil, paprika, cumin and salt.","Air fry at 200C for 12 min, shaking halfway.","Let cool before eating - they crisp up further."]},s4:{description:"Classic hummus with crunchy raw vegetables for dipping.",prepTime:"5 min",servings:"2",ingredients:["150g hummus","1 carrot cut into sticks","half cucumber cut into sticks","handful broccolini","pinch of paprika","drizzle of olive oil"],steps:["Spoon hummus into a bowl.","Drizzle with olive oil and sprinkle paprika.","Arrange vegetables alongside.","Dip and enjoy."]},s5:{description:"Thin crispy tempeh chips with a savoury soy flavour.",prepTime:"12 min",servings:"2",ingredients:["200g tempeh very thinly sliced","2 tbsp soy sauce","1 tsp sesame oil","1 tsp garlic powder"],steps:["Slice tempeh as thin as possible.","Marinate in soy sauce, sesame oil and garlic powder for 5 min.","Air fry at 190C for 10 min, flipping halfway.","Cool on a rack - they crisp further as they cool."]},s6:{description:"Wafer-thin beetroot chips with a satisfying crunch.",prepTime:"18 min",servings:"2",ingredients:["2 medium raw beetroots very thinly sliced","1 tsp olive oil","pinch of salt","pinch of cumin optional"],steps:["Slice beetroot paper-thin.","Pat completely dry with a towel.","Toss lightly in olive oil and salt.","Air fry at 160C for 15 min, checking regularly."]},s7:{description:"A creamy filling snack with yoghurt, peanut butter and banana.",prepTime:"3 min",servings:"1",ingredients:["150g soya yoghurt","1 tbsp peanut butter","1 banana sliced","pinch of cinnamon"],steps:["Spoon yoghurt into a bowl.","Swirl in peanut butter.","Top with banana slices and cinnamon.","Serve immediately."]},s8:{description:"Simple Mediterranean bites with creamy feta, ripe tomato and oregano.",prepTime:"5 min",servings:"2",ingredients:["100g feta cubed","2 tomatoes sliced","1 tsp dried oregano","1 tbsp olive oil","black pepper"],steps:["Arrange tomato slices on a plate.","Place feta cubes on top.","Drizzle with olive oil and sprinkle oregano and black pepper.","Serve with bread or as is."]},s9:{description:"Light airy homemade popcorn with gentle sweetness from stevia, no sugar or salt.",prepTime:"8 min",servings:"2",ingredients:["60g popcorn kernels","1 tbsp coconut oil","4-6 drops liquid stevia to taste","pinch of cinnamon optional"],steps:["Heat coconut oil in a large pan with a lid over medium-high heat.","Add a few kernels - when they pop, add the rest and cover.","Shake pan gently until popping slows, about 3-4 min. Remove from heat.","Drizzle liquid stevia over warm popcorn and toss with cinnamon if using."]},s10:{description:"Tender airfryer cauliflower with golden herb crust.",prepTime:"15 min",servings:"2",ingredients:["half cauliflower cut into florets","1 tbsp olive oil","1 tsp cumin","1 tsp paprika","1 tsp garlic powder","salt and pepper"],steps:["Toss cauliflower florets in olive oil, cumin, paprika and garlic powder.","Season with salt and pepper.","Air fry at 190C for 12-14 min, shaking halfway.","Serve immediately."]}};
+
+var DEFAULT_DISHES=[{id:"m1",moment:"morning",name:"Soya yoghurt with fruit & muesli",kcal:350,protein:14,fibre:6,tags:[]},{id:"m2",moment:"morning",name:"Spelt pancakes with peanut butter & banana",kcal:480,protein:16,fibre:5,tags:[]},{id:"m3",moment:"morning",name:"Wholegrain toast with cheese & jam",kcal:380,protein:14,fibre:4,tags:[]},{id:"m4",moment:"morning",name:"Scrambled eggs with feta & broccolini",kcal:320,protein:22,fibre:3,time:"10 min",tags:[]},{id:"m5",moment:"morning",name:"Muesli with soy milk and fruits",kcal:340,protein:12,fibre:6,tags:[]},{id:"l1",moment:"lunch",name:"Tofu with Asian vegetables & wholegrain rice",kcal:420,protein:22,fibre:6,tags:[]},{id:"l2",moment:"lunch",name:"Tofu with Asian vegetables & shirataki noodles",kcal:280,protein:20,fibre:5,tags:[]},{id:"l3",moment:"lunch",name:"Tempeh bowl with soy sauce, edamame & rice",kcal:460,protein:26,fibre:7,time:"15 min",tags:[]},{id:"l4",moment:"lunch",name:"Lentil & beetroot salad with feta",kcal:360,protein:18,fibre:9,time:"10 min",tags:[]},{id:"l5",moment:"lunch",name:"Bell pepper soup",kcal:220,protein:6,fibre:5,tags:[]},{id:"l6",moment:"lunch",name:"Poke bowl",kcal:480,protein:20,fibre:6,tags:[]},{id:"d1",moment:"dinner",name:"Wholegrain spaghetti with tomato sauce & lentils",kcal:520,protein:24,fibre:11,tags:[]},{id:"d2",moment:"dinner",name:"Chili sin carne - red beans & lentils",kcal:490,protein:22,fibre:13,tags:["kids"]},{id:"d3",moment:"dinner",name:"Wholegrain pasta with green pesto & broccoli",kcal:510,protein:18,fibre:9,tags:["kids"]},{id:"d3b",moment:"dinner",name:"Wholegrain pasta with green pesto & green beans",kcal:490,protein:17,fibre:9,tags:["kids"]},{id:"d5",moment:"dinner",name:"Wholegrain pasta with halloumi & green beans",kcal:530,protein:24,fibre:7,tags:["kids"]},{id:"d7",moment:"dinner",name:"Crispy tofu with red beans & rice",kcal:450,protein:28,fibre:9,time:"20 min",tags:["airfryer","kids"]},{id:"d8",moment:"dinner",name:"Veg. meatballs & parsnip with hummus",kcal:430,protein:20,fibre:8,time:"18 min",tags:["airfryer","kids"]},{id:"d9",moment:"dinner",name:"Stuffed pepper with veg. mince & red beans",kcal:400,protein:22,fibre:10,time:"20 min",tags:["airfryer","kids"]},{id:"d11",moment:"dinner",name:"Fish sticks with spinach & potatoes",kcal:460,protein:26,fibre:6,time:"20 min",tags:["kids"]},{id:"s1",moment:"snack",name:"Beetroot with balsamic vinegar",kcal:80,protein:2,fibre:3,tags:[]},{id:"s2",moment:"snack",name:"Parsnip chips with herbs",kcal:120,protein:2,fibre:4,time:"15 min",tags:["airfryer"]},{id:"s3",moment:"snack",name:"Crispy chickpeas",kcal:150,protein:7,fibre:5,time:"12 min",tags:["airfryer"]},{id:"s4",moment:"snack",name:"Hummus with raw vegetables",kcal:160,protein:6,fibre:5,tags:[]},{id:"s5",moment:"snack",name:"Tempeh chips",kcal:130,protein:10,fibre:3,time:"10 min",tags:["airfryer"]},{id:"s6",moment:"snack",name:"Beetroot chips",kcal:90,protein:2,fibre:3,time:"15 min",tags:["airfryer"]},{id:"s7",moment:"snack",name:"Soya yoghurt with peanut butter & banana",kcal:220,protein:12,fibre:3,tags:[]},{id:"s8",moment:"snack",name:"Feta with tomato & oregano",kcal:140,protein:8,fibre:1,tags:[]},{id:"s9",moment:"snack",name:"Homemade popcorn, sweetened with stevia",kcal:100,protein:2,fibre:2,tags:["stevia"]},{id:"s10",moment:"snack",name:"Cauliflower with herbs",kcal:90,protein:3,fibre:4,time:"15 min",tags:["airfryer"]}];
+var DEFAULT_ING={"Carbohydrates":["Wholegrain pasta","Wholegrain rice","Shirataki noodles","Spelt pancake mix","Wholegrain bread","Muesli"],"Protein":["Tofu","Tempeh","Lentils","Red beans","White beans","Chickpeas","Edamame","Veg. mince","Veg. meatballs","Hummus","Peanut butter","Protein powder"],"Fruit":["Banana","Apple","Mixed berries","Green kiwi","Yellow kiwi","Compote"],"Vegetables":["Broccoli","Broccolini","Green beans","Beetroot","Parsnip","Bell pepper","Tomato","Carrot","Cucumber","Asian vegetables (mix)","Potatoes","Cauliflower","Spinach"],"Dairy & soy":["Soya yoghurt","Soy milk","Halloumi","Feta","Cheese","Eggs"],"Fish":["Fish sticks"],"Sauces":["Heinz tomato sauce","Green pesto","Soy sauce","Balsamic vinegar","Sesame oil","Olive oil","Jam"],"Herbs & spices":["Oregano","Cumin","Paprika powder","Lemon","Cornstarch","Stevia"]};
+
+var dishes=JSON.parse(localStorage.getItem("mp_v4")||"null")||JSON.parse(JSON.stringify(DEFAULT_DISHES));
+var ingredients=JSON.parse(localStorage.getItem("mp_ing4")||"null")||JSON.parse(JSON.stringify(DEFAULT_ING));
+var shopItems=JSON.parse(localStorage.getItem("mp_shop")||"[]");
+
+function save(){localStorage.setItem("mp_v4",JSON.stringify(dishes));localStorage.setItem("mp_ing4",JSON.stringify(ingredients));localStorage.setItem("mp_shop",JSON.stringify(shopItems));}
+
+function renderMeals(){["morning","lunch","dinner","snack"].forEach(function(m){var list=dishes.filter(function(d){return d.moment===m;});document.getElementById("count-"+m).textContent=list.length+" dishes";document.getElementById("dishes-"+m).innerHTML=list.map(dishHTML).join("");});}
+
+function dishHTML(d){var tm={kids:'<span class="tag tag-k">K</span>',airfryer:'<span class="tag tag-af">Airfryer</span>',stevia:'<span class="tag tag-st">Stevia</span>'};var tags=(d.tags||[]).map(function(t){return tm[t]||"";}).join("");var tt=d.time?'<span class="tag tag-t">'+d.time+"</span>":"";var ct=d.custom?'<span class="tag tag-cu">Custom</span>':"";var stats=[];if(d.kcal)stats.push('<span class="dstat"><span class="dsd dsd-k"></span>'+d.kcal+" kcal</span>");if(d.protein)stats.push('<span class="dstat"><span class="dsd dsd-p"></span>'+d.protein+"g protein</span>");if(d.fibre)stats.push('<span class="dstat"><span class="dsd dsd-f"></span>'+d.fibre+"g fibre</span>");return'<button class="dish-btn" onclick="openRecipe(\''+d.id+'\')"><div class="dish-info"><span class="dish-name">'+d.name+"</span>"+(stats.length?'<div class="dish-stats">'+stats.join("")+"</div>":"")+"</div>"+((tags||tt||ct)?'<div class="tags">'+ct+tags+tt+"</div>":"")+'<svg class="arr" viewBox="0 0 16 16" fill="none"><path d="M6 3l5 5-5 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></button>';}
+
+function openRecipe(id){var d=dishes.find(function(x){return x.id===id;});if(!d)return;document.getElementById("modal-title").textContent=d.name;var sub=[];if(d.kcal)sub.push(d.kcal+" kcal");if(d.protein)sub.push(d.protein+"g protein");if(d.fibre)sub.push(d.fibre+"g fibre");document.getElementById("modal-sub").textContent=sub.join(" · ");var r=RECIPES[id];if(r){renderRecipe(r,d);}else{document.getElementById("modal-body").innerHTML='<div class="recipe-desc">Custom dish - no recipe stored yet.</div><div class="stat-cards">'+(d.kcal?'<div class="stat-card"><div class="stat-val">'+d.kcal+'</div><div class="stat-lbl">kcal</div></div>':"")+(d.protein?'<div class="stat-card"><div class="stat-val">'+d.protein+'g</div><div class="stat-lbl">protein</div></div>':"")+(d.fibre?'<div class="stat-card"><div class="stat-val">'+d.fibre+'g</div><div class="stat-lbl">fibre</div></div>':"")+"</div>"+(d.custom?'<button class="del-btn" onclick="deleteDish(\''+d.id+'\')">&#10005; Remove this dish</button>':"");}document.getElementById("overlay-recipe").classList.add("open");document.body.style.overflow="hidden";}
+
+function renderRecipe(r,d){var html='<div class="recipe-desc">'+(r.description||"")+'</div><div class="stat-cards">'+(d.kcal?'<div class="stat-card"><div class="stat-val">'+d.kcal+'</div><div class="stat-lbl">kcal</div></div>':"")+(d.protein?'<div class="stat-card"><div class="stat-val">'+d.protein+'g</div><div class="stat-lbl">protein</div></div>':"")+(d.fibre?'<div class="stat-card"><div class="stat-val">'+d.fibre+'g</div><div class="stat-lbl">fibre</div></div>':"")+(r.prepTime?'<div class="stat-card"><div class="stat-val">'+r.prepTime+'</div><div class="stat-lbl">prep</div></div>':"")+(r.servings?'<div class="stat-card"><div class="stat-val">'+r.servings+'</div><div class="stat-lbl">servings</div></div>':"")+'</div><div class="divider"></div><div class="rec-label">Ingredients</div><div class="rec-ing-list">'+(r.ingredients||[]).map(function(i){return'<div class="rec-ing">'+i+"</div>";}).join("")+'</div><div class="divider"></div><div class="rec-label">Steps</div><div class="steps">'+(r.steps||[]).map(function(s,i){return'<div class="step"><div class="step-n">'+(i+1)+'</div><div class="step-t">'+s+"</div></div>";}).join("")+"</div>"+(d.custom?'<button class="del-btn" onclick="deleteDish(\''+d.id+'\')">&#10005; Remove this dish</button>':"");document.getElementById("modal-body").innerHTML=html;}
+
+function deleteDish(id){if(!confirm("Remove this dish?"))return;dishes=dishes.filter(function(d){return d.id!==id;});save();renderMeals();closeModal("overlay-recipe");}
+
+function openAddDish(moment){["add-name","add-kcal","add-protein","add-fibre","add-time"].forEach(function(id){document.getElementById(id).value="";});document.getElementById("add-moment").value=moment||"morning";["tag-kids","tag-airfryer","tag-stevia"].forEach(function(id){document.getElementById(id).checked=false;});document.getElementById("overlay-add").classList.add("open");document.body.style.overflow="hidden";setTimeout(function(){document.getElementById("add-name").focus();},300);}
+
+function saveDish(){var name=document.getElementById("add-name").value.trim();if(!name)return;var tags=[];if(document.getElementById("tag-kids").checked)tags.push("kids");if(document.getElementById("tag-airfryer").checked)tags.push("airfryer");if(document.getElementById("tag-stevia").checked)tags.push("stevia");function n(s){var v=document.getElementById(s).value.replace(/[^0-9]/g,"");return v?parseInt(v):null;}dishes.push({id:"c"+Date.now(),moment:document.getElementById("add-moment").value,name:name,time:document.getElementById("add-time").value.trim(),kcal:n("add-kcal"),protein:n("add-protein"),fibre:n("add-fibre"),tags:tags,custom:true});save();renderMeals();closeModal("overlay-add");}
+
+function renderShop(){var el=document.getElementById("shop-items");if(!shopItems.length){el.innerHTML='<div class="shop-empty">Your shopping list is empty.<br>Add items below or use quick add.</div>';}else{el.innerHTML=shopItems.map(function(item,i){return'<div class="shop-item'+(item.done?" done":"")+'" onclick="toggleShopItem('+i+')"><div class="shop-check"><span class="shop-check-tick">&#10003;</span></div><span class="shop-item-name">'+item.name+'</span><button class="shop-item-del" onclick="event.stopPropagation();deleteShopItem('+i+')">&#10005;</button></div>';}).join("");}renderQuickChips();}
+
+function renderQuickChips(){var all=Object.values(ingredients).reduce(function(a,b){return a.concat(b);},[]).map(function(i){return i.startsWith("*")?i.slice(1):i;});var inShop=new Set(shopItems.map(function(i){return i.name.toLowerCase();}));document.getElementById("quick-chips").innerHTML=all.filter(function(i){return!inShop.has(i.toLowerCase());}).slice(0,40).map(function(i){return'<button class="quick-chip" onclick="quickAdd(\''+esc(i)+'\')">'+i+"</button>";}).join("");}
+
+function addShopItem(){var inp=document.getElementById("shop-input");var val=inp.value.trim();if(!val)return;shopItems.push({name:val,done:false});inp.value="";save();renderShop();}
+function quickAdd(name){shopItems.push({name:name,done:false});save();renderShop();}
+function toggleShopItem(i){shopItems[i].done=!shopItems[i].done;save();renderShop();}
+function deleteShopItem(i){shopItems.splice(i,1);save();renderShop();}
+function clearDoneItems(){shopItems=shopItems.filter(function(i){return!i.done;});save();renderShop();}
+
+function renderIngredients(){document.getElementById("ing-content").innerHTML=Object.entries(ingredients).map(function(entry){var cat=entry[0];var items=entry[1];return'<div class="ing-sec"><div class="ing-sec-title">'+cat+'</div><div class="ing-col">'+items.map(function(item,i){var display=item.startsWith("*")?item.slice(1):item;return'<div class="ing-row'+(item.startsWith("*")?" custom":"")+'"><span class="ing-name">'+display+'</span><button class="ing-del" onclick="delIng(\''+esc(cat)+'\','+i+')">&#10005;</button></div>';}).join("")+'</div><div class="add-ing-row"><input placeholder="Add ingredient..." id="ii-'+cat.replace(/\W/g,"_")+'" onkeydown="if(event.key===\'Enter\')addIng(\''+esc(cat)+'\')"/><button onclick="addIng(\''+esc(cat)+'\')">Add</button></div></div>';}).join("")+'<div class="new-cat-section"><span class="new-cat-label">Create new category</span><div class="add-ing-row"><input placeholder="Category name..." id="new-cat" onkeydown="if(event.key===\'Enter\')addCat()"/><button onclick="addCat()">Create</button></div></div>';}
+
+function addIng(cat){var k=cat.replace(/\W/g,"_");var v=document.getElementById("ii-"+k).value.trim();if(!v)return;if(!ingredients[cat])ingredients[cat]=[];ingredients[cat].push("*"+v);save();renderIngredients();}
+function delIng(cat,i){ingredients[cat].splice(i,1);if(!ingredients[cat].length)delete ingredients[cat];save();renderIngredients();}
+function addCat(){var v=document.getElementById("new-cat").value.trim();if(!v||ingredients[v])return;ingredients[v]=[];save();renderIngredients();}
+
+function showTab(name,el){document.querySelectorAll(".tab").forEach(function(t){t.classList.remove("active");});document.querySelectorAll(".view").forEach(function(v){v.classList.remove("active");});el.classList.add("active");document.getElementById("view-"+name).classList.add("active");if(name==="ingredients")renderIngredients();if(name==="shop")renderShop();}
+
+function esc(s){return(s||"").replace(/'/g,"\\'").replace(/"/g,"&quot;");}
+function closeModal(id){document.getElementById(id).classList.remove("open");document.body.style.overflow="";}
+function handleOC(e,id){if(e.target===document.getElementById(id))closeModal(id);}
+document.addEventListener("keydown",function(e){if(e.key==="Escape"){closeModal("overlay-recipe");closeModal("overlay-add");}});
+if("serviceWorker" in navigator){window.addEventListener("load",function(){navigator.serviceWorker.register("sw.js").catch(function(){});});}
+renderMeals();
+</script>
+</body>
+</html>
